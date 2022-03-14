@@ -1,0 +1,30 @@
+{
+    "compilerOptions": {
+        "sourceMap": true,
+        "noImplicitAny": false,
+        "module": "commonjs",
+        "target": "ES5",
+        "lib": [
+            "ES2015",
+            "DOM"
+        ],
+        "allowJs": false,
+        "moduleResolution": "node",
+        "outDir": "./dist",
+        "rootDir": "./",
+        // "listFiles": true, // 打印参与编译文件
+        // "listEmittedFiles": true, // 打印输出文件
+        "esModuleInterop": true, // 允许使用es module导入导出
+        // "noUnusedParameters": true, // 检查未使用的函数参数
+        "noUnusedLocals": true, // 检查声明未使用的变量
+        "noEmitOnError": true, // 发生错误时不输出文件
+        "declaration": true, // 生成声明文件
+        "declarationDir": "./dist", // 指定生成声明文件存放目录
+    },
+    "include": [
+        "src"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}

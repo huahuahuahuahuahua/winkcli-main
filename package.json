@@ -1,0 +1,32 @@
+{
+  "name": "winkcli-main",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon --watch src -e ts --exec ts-node src/bin/index.ts",
+    "watch": "nodemon --watch src -e ts --exec tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "winkcli": "src/bin/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "co": "^4.6.0",
+    "co-prompt": "^1.0.0",
+    "chalk": "^4.0.1",
+    "commander": "^9.0.0",
+    "inquirer": "^8.2.1",
+    "nodemon": "^2.0.15",
+    "readline": "^1.3.0",
+    "shelljs": "^0.8.5",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.2"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.21"
+  }
+}
