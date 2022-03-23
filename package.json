@@ -1,0 +1,55 @@
+{
+  "name": "winkcli-main",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon --watch src -e ts --exec ts-node src/bin/index.ts",
+    "watch": "nodemon --watch src -e ts --exec tsc",
+    "build": "npm run clear",
+    "publish": "npm run build&&npm publish",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "winkcli": "src/bin/index.js",
+    "winkcli-local": "src/bin/index-local.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/huahuahuahuahuahua/winkcli.git"
+  },
+  "keywords": [
+    "cli",
+    "node",
+    "typescript",
+    "command"
+  ],
+  "files": [
+    "build",
+    "bin.js"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "co": "^4.6.0",
+    "co-prompt": "^1.0.0",
+    "chalk": "^4.0.1",
+    "commander": "^9.0.0",
+    "inquirer": "^8.2.1",
+    "nodemon": "^2.0.15",
+    "readline": "^1.3.0",
+    "shelljs": "^0.8.5",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.2",
+    "ora": "^5.4.1",
+    "pacote": "^12.0.2",
+    "execa": "^5.1.1",
+    "globby": "^11.0.4",
+    "handlebars": "^4.7.7",
+    "fs-extra": "^10.0.0",
+    "rimraf": "^3.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.21"
+  }
+}
