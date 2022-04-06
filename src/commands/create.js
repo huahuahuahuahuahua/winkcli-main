@@ -3,6 +3,7 @@ const inquirer = require("inquirer");
 const readline = require("readline");
 const path = require("path");
 const handlebars = require("handlebars");
+const download = require("download-git-repo");
 const {
   cwd,
   chalk,
@@ -216,6 +217,22 @@ const getQuestions = async (projectName) => {
         },
       ],
     },
+    //文件拷贝方式
+    {
+      type: "list",
+      name: "copyfile",
+      message: "文件拷贝方式:",
+      choices: [
+        {
+          name: "cloneProject（从本地克隆项目）",
+          value: "cloneProject",
+        },
+        {
+          name: "downloadProject（从远程git下载项目）",
+          value: "downloadProject",
+        },
+      ],
+    },
     {
       type: "input",
       name: "name",
@@ -250,11 +267,33 @@ const getQuestions = async (projectName) => {
 };
 const cloneProject = async (targetDir, projectName, projectInfo) => {
   startSpinner(`开始创建仓库 ${chalk.cyan(projectName)}...`);
-
   await fs.copy(
     path.join(__dirname, "..", "..", projectInfo.project),
     targetDir
   );
+  cloneFile(targetDir, projectName, projectInfo);
+};
+const downloadProject = (targetDir, projectName, projectInfo) => {
+  startSpinner(`开始创建仓库 ${chalk.cyan(projectName)}...`);
+  //https://github.com/huahuahuahuahuahua/winkcli-main/tree/master
+  download(
+    "https://github.com:huahuahuahuahuahua/winkcli-main#master",
+    projectInfo.project,
+    { clone: true },
+    (err) => {
+      if (err) {
+        failSpinner("克隆项目失败，err:", err);
+        return;
+      } else {
+        execa.command(`ren ${targetDir} ${projectName}`);
+        succeedSpiner("克隆项目成功");
+        cloneFile(targetDir, projectName, projectInfo);
+      }
+    }
+  );
+  return;
+};
+const cloneFile = async (targetDir, projectName, projectInfo) => {
   const jsonPath = `${targetDir}/package.json`;
   const jsonContent = fs.readFileSync(jsonPath, "utf-8");
   const jsonResult = handlebars.compile(jsonContent)(projectInfo);
@@ -262,7 +301,6 @@ const cloneProject = async (targetDir, projectName, projectInfo) => {
   succeedSpiner(`仓库创建完成 ${chalk.cyan(projectName)}\n\n输入命令：\n`);
   info(`$ cd ${projectName}\n$ npm install\n`);
 };
-
 const action = async (projectName, cmdArgs) => {
   try {
     const targetDir = path.join(
@@ -271,7 +309,13 @@ const action = async (projectName, cmdArgs) => {
     );
     if (!(await checkProjectExist(targetDir))) {
       const projectInfo = await getQuestions(projectName);
-      await cloneProject(targetDir, projectName, projectInfo);
+      if (projectInfo.copyfile === "cloneProject") {
+        await cloneProject(targetDir, projectName, projectInfo);
+      } else if (projectInfo.copyfile === "downloadProject") {
+        downloadProject(targetDir, projectName, projectInfo);
+      } else {
+        console.error(chalk.hex("#f40")("请输入文件拷贝方式"));
+      }
     }
   } catch (error) {
     if (!projectName) {
