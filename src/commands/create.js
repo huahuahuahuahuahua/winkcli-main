@@ -275,17 +275,19 @@ const cloneProject = async (targetDir, projectName, projectInfo) => {
 };
 const downloadProject = (targetDir, projectName, projectInfo) => {
   startSpinner(`开始创建仓库 ${chalk.cyan(projectName)}...`);
+  info(
+    `下载地址：https://github.com:huahuahuahuahuahua/${projectInfo.project}#main`
+  );
   //https://github.com/huahuahuahuahuahua/winkcli-main/tree/master
   download(
-    "https://github.com:huahuahuahuahuahua/winkcli-main#master",
-    projectInfo.project,
+    `https://github.com:huahuahuahuahuahua/${projectInfo.project}#main`,
+    projectName,
     { clone: true },
-    (err) => {
+    async (err) => {
       if (err) {
         failSpinner("克隆项目失败，err:", err);
-        return;
+        throw new Error(err);
       } else {
-        execa.command(`ren ${targetDir} ${projectName}`);
         succeedSpiner("克隆项目成功");
         cloneFile(targetDir, projectName, projectInfo);
       }
@@ -293,12 +295,12 @@ const downloadProject = (targetDir, projectName, projectInfo) => {
   );
   return;
 };
-const cloneFile = async (targetDir, projectName, projectInfo) => {
+const cloneFile = (targetDir, projectName, projectInfo) => {
   const jsonPath = `${targetDir}/package.json`;
   const jsonContent = fs.readFileSync(jsonPath, "utf-8");
   const jsonResult = handlebars.compile(jsonContent)(projectInfo);
   fs.writeFileSync(jsonPath, jsonResult);
-  succeedSpiner(`仓库创建完成 ${chalk.cyan(projectName)}\n\n输入命令：\n`);
+  succeedSpiner(`仓库创建完成 ${chalk.cyan(projectName)}\n\n输入命令：`);
   info(`$ cd ${projectName}\n$ npm install\n`);
 };
 const action = async (projectName, cmdArgs) => {

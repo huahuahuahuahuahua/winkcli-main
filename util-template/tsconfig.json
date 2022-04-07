@@ -74,6 +74,6 @@
     "src",
     "*.js",
     "test",
-    "types", "gulpfile.ts",
+    "types", "gulpfile.ts", "test",
   ]
 }
