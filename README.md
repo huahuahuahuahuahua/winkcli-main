@@ -1,5 +1,10 @@
+[![](https://img.shields.io/badge/winkcli-@huawink-blue.svg?style=plastic)]({https://www.npmjs.com/package/winkcli-main})
+[![](https://img.shields.io/github/v/release/huahuahuahuahuahua/winkcli-main.svg)]({https://www.npmjs.com/package/winkcli-main})
+
 # WINKCLI
-这是一个通过命令行构建createapp的模板
+
+这是一个通过命令行构建 createapp 的模板
+
 ## how to use
 
 进入项目根路径后使用命令
@@ -7,14 +12,14 @@
 进行依赖安装
 
 `npm link`
-在package.json中
-`
-"bin": {
-    "winkcli": "src/bin/index.js"
-  },
-`
+在 package.json 中
 
-####  该命令可以创建一个global环境的命令 `winkcli`
+"bin": {
+"winkcli": "src/bin/index.js"
+},
+
+#### 该命令可以创建一个 global 环境的命令 `winkcli`
+
 ### 显示
 
 ```js
@@ -37,8 +42,6 @@ Commands:
 ```
 
 #### 即可进行使用
-
-
 
 ## 目录说明
 
@@ -66,6 +69,3 @@ Commands:
                 init.js				---模板初始化
                 list.js         	---列表显示
 ```
-
-
-

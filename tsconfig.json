@@ -1,12 +1,13 @@
 {
     "compilerOptions": {
-        "target": "es2017",
+        "target": "es2015",
         "module": "commonjs",
         "moduleResolution": "node",
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "allowSyntheticDefaultImports": true,
         "forceConsistentCasingInFileNames":true,
+        
         "strict": true,
         "alwaysStrict": true,
         "sourceMap": false,
@@ -28,7 +29,7 @@
         "node_modules",
         "build",
         "temp",
-        "scripts",
+        "src/scripts",
         "./src/__tests__"
     ],
         
