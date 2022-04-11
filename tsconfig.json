@@ -7,6 +7,7 @@
         "experimentalDecorators": true,
         "allowSyntheticDefaultImports": true,
         "forceConsistentCasingInFileNames":true,
+        
         "strict": true,
         "alwaysStrict": true,
         "sourceMap": false,
@@ -28,7 +29,7 @@
         "node_modules",
         "build",
         "temp",
-        "scripts",
+        "src/scripts",
         "./src/__tests__"
     ],
         
