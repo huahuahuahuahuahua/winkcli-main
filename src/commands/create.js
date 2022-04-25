@@ -144,6 +144,7 @@ const cloneFile = (targetDir, projectName, projectInfo) => {
   const jsonPath = `${targetDir}/package.json`;
   const jsonContent = fs.readFileSync(jsonPath, "utf-8");
   const jsonResult = handlebars.compile(jsonContent)(projectInfo);
+  fs.writeFileSync(jsonPath, jsonResult);
 };
 const action = async (projectName, cmdArgs) => {
   try {
@@ -151,16 +152,16 @@ const action = async (projectName, cmdArgs) => {
       (cmdArgs && cmdArgs.content) || cwd,
       projectName
     );
-    if (!(await checkProjectExist(targetDir))) {
-      const projectInfo = await getQuestions(projectName);
-      if (projectInfo.copyfile === "cloneProject") {
-        await cloneProject(targetDir, projectName, projectInfo);
-      } else if (projectInfo.copyfile === "downloadProject") {
-        downloadProject(targetDir, projectName, projectInfo);
-      } else {
-        console.error(chalk.hex("#f40")("请输入文件拷贝方式"));
-      }
+    // if (!(await checkProjectExist(targetDir))) {
+    const projectInfo = await getQuestions(projectName);
+    if (projectInfo.copyfile === "cloneProject") {
+      await cloneProject(targetDir, projectName, projectInfo);
+    } else if (projectInfo.copyfile === "downloadProject") {
+      downloadProject(targetDir, projectName, projectInfo);
+    } else {
+      console.error(chalk.hex("#f40")("请输入文件拷贝方式"));
     }
+    // }
   } catch (error) {
     if (!projectName) {
       console.error(chalk.hex("#f40")("请输入项目名"));
@@ -310,9 +311,8 @@ const install = async (
         });
         return;
       }
-      fs.writeFileSync(jsonPath, jsonResult);
       succeedSpiner(`仓库创建完成 ${chalk.cyan(projectName)}\n\n输入命令：`);
-      info(`$ cd ${projectName}\n`);
+      info(`$ cd ${projectName}\n$ npm install\n`);
       resolve();
     });
   });
