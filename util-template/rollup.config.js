@@ -1,9 +1,3 @@
-/*
- * @Author: t_winkjqzhang
- * @Date: 2022-03-31 14:34:38
- * @LastEditTime: 2022-04-09 01:39:23
- * @Description: Do not edit
- */
 import resolve from "@rollup/plugin-node-resolve";
 import path from "path";
 import commonjs from "rollup-plugin-commonjs";
@@ -12,7 +6,7 @@ import json from "@rollup/plugin-json";
 import babel from "@rollup/plugin-babel";
 import { DEFAULT_EXTENSIONS } from "@babel/core";
 import replace from "@rollup/plugin-replace";
-import { uglify } from "rollup-plugin-uglify";
+import { terser } from "rollup-plugin-terser";
 import clear from "rollup-plugin-clear";
 import nodePolyfills from "rollup-plugin-polyfill-node";
 import pkg from "./package.json";
@@ -56,7 +50,7 @@ let g_d_plugins_01 = [
   json(),
 ];
 //添加丑化插件
-let g_d_plugins_02 = g_d_plugins_01.concat([uglify()]);
+let g_d_plugins_02 = g_d_plugins_01.concat([terser()]);
 let g_d_3rd_lib_dep = ["axios"];
 let g_d_tasks_list = [].concat(
   // 打包成无依赖、有压缩的 umd 文件，适用于页面通过 amd、cmd、直接引入的方式使用

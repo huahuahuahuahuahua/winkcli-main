@@ -153,6 +153,7 @@ const action = async (projectName, cmdArgs) => {
       projectName
     );
     // if (!(await checkProjectExist(targetDir))) {
+    fs.removeSync(targetDir);
     const projectInfo = await getQuestions(projectName);
     if (projectInfo.copyfile === "cloneProject") {
       await cloneProject(targetDir, projectName, projectInfo);
@@ -311,8 +312,8 @@ const install = async (
         });
         return;
       }
-      succeedSpiner(`仓库创建完成 ${chalk.cyan(projectName)}\n\n输入命令：`);
-      info(`$ cd ${projectName}\n$ npm install\n`);
+      succeedSpiner(`仓库创建完成 ${chalk.cyan(appName)}\n\n输入命令：`);
+      info(`$ cd ${appName}\n`);
       resolve();
     });
   });
