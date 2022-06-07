@@ -60,6 +60,14 @@ const getQuestions = async (projectName) => {
           name: "react（创建react模板）",
           value: "react-template",
         },
+        {
+          name: "webpack-vue-ts模板",
+          value: "webpack-vue-ts",
+        },
+        {
+          name: "webpack-react-ts模板",
+          value: "webpack-react-ts",
+        },
       ],
     },
     //文件拷贝方式
