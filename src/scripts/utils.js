@@ -2,8 +2,6 @@ const https = require("https");
 const semver = require("semver");
 const validateProjectName = require("validate-npm-package-name");
 const { chalk, fs } = require("../lib");
-const dns = require("dns");
-
 function isUsingYarn() {
   return (process.env.npm_config_user_agent || "").indexOf("yarn") === 0;
 }
@@ -180,20 +178,20 @@ function checkIfOnline(useYarn) {
     return Promise.resolve(true);
   }
 
-  return new Promise((resolve) => {
-    dns.lookup("registry.yarnpkg.com", (err) => {
-      let proxy;
-      if (err != null && (proxy = getProxy())) {
-        // If a proxy is defined, we likely can't resolve external hostnames.
-        // Try to resolve the proxy name as an indication of a connection.
-        dns.lookup(url.parse(proxy).hostname, (proxyErr) => {
-          resolve(proxyErr == null);
-        });
-      } else {
-        resolve(err == null);
-      }
-    });
-  });
+  // return new Promise((resolve) => {
+  //   dns.lookup("registry.yarnpkg.com", (err) => {
+  //     let proxy;
+  //     if (err != null && (proxy = getProxy())) {
+  //       // If a proxy is defined, we likely can't resolve external hostnames.
+  //       // Try to resolve the proxy name as an indication of a connection.
+  //       dns.lookup(url.parse(proxy).hostname, (proxyErr) => {
+  //         resolve(proxyErr == null);
+  //       });
+  //     } else {
+  //       resolve(err == null);
+  //     }
+  //   });
+  // });
 } // See https://github.com/facebook/create-react-app/pull/3355
 function checkThatNpmCanReadCwd() {
   const cwd = process.cwd();
