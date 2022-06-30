@@ -68,6 +68,10 @@ const getQuestions = async (projectName) => {
           name: "webpack-react-ts模板",
           value: "webpack-react-ts",
         },
+        {
+          name: "gitbookTemplate模板",
+          value: "gitbookTemplate",
+        },
       ],
     },
     //文件拷贝方式
