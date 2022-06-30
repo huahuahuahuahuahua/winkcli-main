@@ -133,11 +133,11 @@ const cloneProject = async (targetDir, projectName, projectInfo) => {
 const downloadProject = (targetDir, projectName, projectInfo) => {
   startSpinner(`开始创建仓库 ${chalk.cyan(projectName)}...`);
   info(
-    `下载地址：https://github.com:huahuahuahuahuahua/${projectInfo.project}#main`
+    `下载地址：https://github.com:huahuahuahuahuahua/${projectInfo.project}#master`
   );
   //https://github.com/huahuahuahuahuahua/winkcli-main/tree/master
   download(
-    `https://github.com:huahuahuahuahuahua/${projectInfo.project}#main`,
+    `https://github.com:huahuahuahuahuahua/${projectInfo.project}#master`,
     projectName,
     { clone: true },
     async (err) => {

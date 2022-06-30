@@ -59,6 +59,7 @@ function confirmNpmSupport() {
     // version = "react-scripts@0.9.x";
   }
 }
+// 检查project名称是否合法
 function checkAppName(appName) {
   const validationResult = validateProjectName(appName);
   if (!validationResult.validForNewPackages) {

@@ -1,3 +1,4 @@
+// 判断node版本，应高于14版本
 function judgeNodeVersion() {
   const currentNodeVersion = process.versions.node;
   const semver = currentNodeVersion.split(".");
