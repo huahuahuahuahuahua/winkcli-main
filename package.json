@@ -7,7 +7,7 @@
     "dev": "nodemon --watch src -e ts --exec ts-node src/bin/index.ts",
     "watch": "nodemon --watch src -e ts --exec tsc",
     "build": "npm run clear",
-    "publish": "npm publish",
+    "release": "npm publish",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
