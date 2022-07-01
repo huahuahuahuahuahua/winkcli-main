@@ -11,6 +11,7 @@ const {
   checkNpmVersion,
   checkIfOnline,
   checkThatNpmCanReadCwd,
+  checkYarnVersion,
 } = require("../scripts/utils");
 const {
   cwd,
@@ -25,8 +26,12 @@ const {
 } = require("../lib");
 //cross-spawn：这个我之前说到了没有？忘了，用来执行node进程。
 const spawn = require("cross-spawn");
-const checkProjectExist = async (targetDir) => {
+const checkProjectExist = async (targetDir, projectName) => {
   if (fs.existsSync(targetDir)) {
+    // 存在时判断是否安全
+    if (!isSafeToCreateProjectIn(targetDir, projectName)) {
+      process.exit(1);
+    }
     const answer = await inquirer.prompt({
       type: "list",
       name: "checkExist",
@@ -57,15 +62,15 @@ const getQuestions = async (projectName) => {
           value: "util-template",
         },
         {
-          name: "react（创建react模板）",
+          name: "react（创建react模板）无",
           value: "react-template",
         },
         {
-          name: "webpack-vue-ts模板",
+          name: "webpack-vue-ts模板 无",
           value: "webpack-vue-ts",
         },
         {
-          name: "webpack-react-ts模板",
+          name: "webpack-react-ts模板 无",
           value: "webpack-react-ts",
         },
         {
@@ -80,10 +85,11 @@ const getQuestions = async (projectName) => {
       name: "copyfile",
       message: "文件拷贝方式:",
       choices: [
-        {
-          name: "cloneProject（从本地克隆项目）",
-          value: "cloneProject",
-        },
+        // 不想要用本地克隆了，太费劲了
+        // {
+        //   name: "cloneProject（从本地克隆项目）",
+        //   value: "cloneProject",
+        // },
         {
           name: "downloadProject（从远程git下载项目）",
           value: "downloadProject",
@@ -99,29 +105,17 @@ const getQuestions = async (projectName) => {
     {
       type: "input",
       name: "description",
-      message: "description",
+      message: "description：",
     },
     {
       type: "input",
       name: "author",
-      message: "author",
+      message: "author：",
     },
   ];
   return await inquirer.prompt(prompt);
-  // .then((answer) => {
-  //   console.log(answer);
-  //   return answer;
-  // })
-  // .catch((error) => {
-  //   if (error.isTtyError) {
-  //     failSpinner("Prompt couldn't be rendered in the current environment");
-  //     //Prompt couldn't be rendered in the current environment
-  //   } else {
-  //     failSpinner(error);
-  //     //something else went wrong...
-  //   }
-  // });
 };
+// 克隆模板到创建的项目目录中
 const cloneProject = async (targetDir, projectName, projectInfo) => {
   startSpinner(`开始创建仓库 ${chalk.cyan(projectName)}...`);
   await fs.copy(
@@ -130,47 +124,54 @@ const cloneProject = async (targetDir, projectName, projectInfo) => {
   );
   cloneFile(targetDir, projectName, projectInfo);
 };
-const downloadProject = (targetDir, projectName, projectInfo) => {
-  startSpinner(`开始创建仓库 ${chalk.cyan(projectName)}...`);
-  info(
-    `下载地址：https://github.com:huahuahuahuahuahua/${projectInfo.project}#master`
-  );
-  //https://github.com/huahuahuahuahuahua/winkcli-main/tree/master
-  download(
-    `https://github.com:huahuahuahuahuahua/${projectInfo.project}#master`,
-    projectName,
-    { clone: true },
-    async (err) => {
-      if (err) {
-        failSpinner("克隆项目失败，err:", err);
-        throw new Error(err);
-      } else {
-        succeedSpiner("克隆项目成功");
-        cloneFile(targetDir, projectName, projectInfo);
+// github下载项目下来
+const downloadProject = async (targetDir, projectName, projectInfo) => {
+  return new Promise((resolve, reject) => {
+    startSpinner(`开始创建仓库 ${chalk.cyan(projectName)}...`);
+    info(
+      `下载地址：https://github.com:huahuahuahuahuahua/${projectInfo.project}#master`
+    );
+    //https://github.com/huahuahuahuahuahua/winkcli-main/tree/master
+    download(
+      `https://github.com:huahuahuahuahuahua/${projectInfo.project}#master`,
+      projectName,
+      { clone: true },
+      async (err) => {
+        if (err) {
+          failSpinner("克隆github项目失败，err:", err);
+          throw new Error(err);
+        } else {
+          succeedSpiner("克隆github项目成功");
+          await cloneFile(targetDir, projectName, projectInfo);
+          resolve();
+        }
       }
-    }
-  );
+    );
+  });
   return;
 };
-const cloneFile = (targetDir, projectName, projectInfo) => {
-  const jsonPath = `${targetDir}/package.json`;
-  const jsonContent = fs.readFileSync(jsonPath, "utf-8");
-  const jsonResult = handlebars.compile(jsonContent)(projectInfo);
-  fs.writeFileSync(jsonPath, jsonResult);
+const cloneFile = async (targetDir, projectName, projectInfo) => {
+  return new Promise((resolve, reject) => {
+    const jsonPath = `${targetDir}/package.json`;
+    const jsonContent = fs.readFileSync(jsonPath, "utf-8");
+    const jsonResult = handlebars.compile(jsonContent)(projectInfo);
+    fs.writeFileSync(jsonPath, jsonResult);
+    resolve();
+  }).catch((err) => failSpinner("克隆项目到目录失败，err:", err));
 };
-const action = async (projectName, cmdArgs) => {
+
+const downloadProjectAction = async (projectName, cmdArgs) => {
   try {
     const targetDir = path.join(
       (cmdArgs && cmdArgs.content) || cwd,
       projectName
     );
-    // if (!(await checkProjectExist(targetDir))) {
-    fs.removeSync(targetDir);
     const projectInfo = await getQuestions(projectName);
     if (projectInfo.copyfile === "cloneProject") {
-      await cloneProject(targetDir, projectName, projectInfo);
+      // 暂时废除不维护
+      // await cloneProject(targetDir, projectName, projectInfo);
     } else if (projectInfo.copyfile === "downloadProject") {
-      downloadProject(targetDir, projectName, projectInfo);
+      await downloadProject(targetDir, projectName, projectInfo);
     } else {
       console.error(chalk.hex("#f40")("请输入文件拷贝方式"));
     }
@@ -185,20 +186,21 @@ const action = async (projectName, cmdArgs) => {
     process.exit(1);
   }
 };
-
-const create = (projectName, verbose, force, useYarn, usePnp) => {
+// 创建项目
+const create = async (projectName, verbose, force, useYarn, usePnp) => {
+  // 确认npm是否支持
   confirmNpmSupport();
   const root = path.resolve(projectName);
+  // path = "D:\filecat\dog.jpg";  dog.jpg
   const appName = path.basename(root);
+  // 检查名称是否合法
   checkAppName(appName);
-  fs.ensureDirSync(projectName);
-  if (!isSafeToCreateProjectIn(root, projectName)) {
-    process.exit(1);
-  }
+  // 检查项目是否存在
+  await checkProjectExist(root, projectName);
+
   console.log(`\nCreating a new  app in ${chalk.green(root)}.\n`);
   // 定义package.json基础内容
   const originalDirectory = process.cwd();
-  process.chdir(root);
   if (!useYarn && !checkThatNpmCanReadCwd()) {
     process.exit(1);
   }
@@ -240,32 +242,32 @@ const create = (projectName, verbose, force, useYarn, usePnp) => {
       }
     }
   }
-  run(root, appName, verbose, force, originalDirectory, useYarn);
+  // 拷贝文件并安装依赖
+  installPackage(
+    root,
+    appName,
+    verbose,
+    force,
+    originalDirectory,
+    useYarn,
+    usePnp
+  );
 };
-
-const run = async (
-  root,
-  appName,
-  verbose,
-  originalDirectory,
-  useYarn,
-  usePnp
-) => {
-  console.log("Installing packages. This might take a couple of minutes.");
-  isOnline = await checkIfOnline();
-  install(root, appName, verbose, originalDirectory, useYarn, usePnp, isOnline);
-};
-const install = async (
+// 拷贝文件并安装依赖
+const installPackage = async (
   root,
   appName,
   verbose,
   force,
   originalDirectory,
   useYarn,
-  usePnp,
-  isOnline
+  usePnp
 ) => {
-  await action(appName, cwd);
+  console.log("Installing packages. This might take a couple of minutes.");
+  const isOnline = await checkIfOnline();
+  // 下载文件下来
+  await downloadProjectAction(appName, cwd);
+  // npm or yarn 安装
   return new Promise((resolve, reject) => {
     let command;
     let args;
@@ -325,7 +327,7 @@ const install = async (
         return;
       }
       succeedSpiner(`仓库创建完成 ${chalk.cyan(appName)}\n\n输入命令：`);
-      info(`$ cd ${appName}\n`);
+      info(`$ cd ${appName}\n进入项目,查看package.json scripts启动项目`);
       resolve();
     });
   });
@@ -339,5 +341,4 @@ module.exports = {
     ["--context <context>", "上下文路径"],
     ["-f,--force <path>", "是否强制创建"],
   ],
-  // create: action,
 };
