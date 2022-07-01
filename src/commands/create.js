@@ -267,6 +267,9 @@ const installPackage = async (
   const isOnline = await checkIfOnline();
   // 下载文件下来
   await downloadProjectAction(appName, cwd);
+
+  // 切换到文件夹目录中
+  process.chdir(root);
   // npm or yarn 安装
   return new Promise((resolve, reject) => {
     let command;
@@ -318,6 +321,7 @@ const installPackage = async (
     if (verbose) {
       args.push("--verbose");
     }
+    startSpinner(`开始安装依赖 ${chalk.cyan(projectName)}...`);
     const child = spawn(command, args, { stdio: "inherit" });
     child.on("close", (code) => {
       if (code !== 0) {
